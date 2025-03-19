@@ -5,7 +5,7 @@
 A little about me:
 
 - I am undertaking a degree in **Computer Science**
-- I am taking STATS 220 because ....
+- I am taking STATS 220 because i enjoy **Stats**
 - I am interested in learning about *data collection*
 
 1. I like reading
