@@ -1,0 +1,87 @@
+---
+title: My dynamic report
+output: html_fragment
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=FALSE)
+
+```
+
+```{css}
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9c9d2;
+  color: #333333;
+}
+
+h1 {
+  color: #f07f8f;
+  font-size: 24px;
+}
+
+h2 {
+  color: #f4a6b5;
+  font-size: 20px;
+}
+/* links */
+a {
+  color: #d84c7e;
+}
+```
+
+## Analyzing Customer Behavior in Shops
+
+This report analyses customer behavior in various shop types. It explores time spent in shops, primary activities, and drink preferences using dynamic generated data.
+
+```{r}
+library(tidyverse)
+
+logged_data <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vRq_qUjzQRCzyA_NKbSEtCyRUIULOT1JeaUWHaGhgmJs6PHgBz1vEdop-HEe1yhnFj5bsfmI3NUphOy/pub?output=csv")
+latest_data <- logged_data %>%
+  rename(
+    timestamp = Timestamp,
+    shop_type = `What type of shop was this seen at?`,
+    activity = `What was the primary activity that was done.`,
+    drink = `What was the drink type that was being drunk or held.`,
+    group_size = `What was the group size.`,
+    time_spent = `Time Spent in (minutes)`
+  )
+# Bar chart 1: Primary activity based on the shop type.
+ggplot(latest_data, aes(x = shop_type, fill = activity)) +
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Customer Activities by Shop Type",
+    x = "Shop Type",
+    y = "Count",
+    fill = "Activity"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+# Bar Chart 2: Drink preferences based on the shop type.
+ggplot(latest_data, aes(x = shop_type, fill = drink)) +
+  geom_bar(position = "fill") +
+  labs(
+    title = "Drink Type Preferences by Shop Type",
+    x = "Shop Type",
+    y = "Proportion",
+    fill = "Drink Type"
+  ) +
+  scale_y_continuous(labels = scales::percent) +  
+  theme_minimal()
+#calculates average time spent in each shop aswell as the min and max time
+time_summary <- latest_data %>%
+  group_by(shop_type) %>%
+  summarise(
+    avg_time = mean(time_spent),
+    max_time = max(time_spent),
+    min_time = min(time_spent)
+  )
+
+#Dynamic comments.
+paste("On average, customers spend", round(time_summary$avg_time, 2), "minutes at the shop.", sep = " ")
+
+
+```
+
+
